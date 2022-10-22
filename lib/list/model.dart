@@ -33,13 +33,13 @@ class Attendence extends StatelessWidget {
                     subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [Padding(padding: EdgeInsets.only(top: 0),
-                          child: Text(email!),),
+                          child: Text(""),),
                           Padding(padding: EdgeInsets.only(top: 0),
                             child: Row(
                                 children: [
                                   Padding(
                                       padding: EdgeInsets.only(top: 0, right: 12),
-                                      child: Text("")
+                                      child: Text(email!)
                                   ),
                                 ]),)
                         ]),

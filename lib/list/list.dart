@@ -13,19 +13,42 @@ Package_list(String batch) {
     parcel.clear();
     time = "Afternoon-Session";
     parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
-  } else {
+  } else if(batch=="___Select___") {
+    time="null";
     parcel.clear();
+  }
+  else
+{
+    parcel.clear();
+    time="both";
+    parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
   }
   return
       StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('hacktober-2022').snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.data != null) {
+        if(time=="Morning-Session" || time=="Afternoon-Session") {
+          if (snapshot.data != null &&
+              snapshot.connectionState == ConnectionState.active) {
+            try {
+              print(snapshot.data!.docs.length);
+              for (var element in snapshot.data!.docs) {
+                if (element[time] == "Attended") {
+                  parcel.add(Attendence(element['Name'], element['Email'],
+                      element['Morning-Session'],
+                      element['Afternoon-Session']));
+                }
+              }
+            } catch (e) {
+              print(e);
+            }
+            print(parcel);
+          }
+        }else if (time=="both" && snapshot.data != null && snapshot.connectionState==ConnectionState.active) {
           try {
             print(snapshot.data!.docs.length);
             for (var element in snapshot.data!.docs) {
-              if (element[time] == "Attended") {
-                print("data");
+              if (element["Morning-Session"] == "Attended" && element["Afternoon-Session"]=="Attended") {
                 parcel.add(Attendence(element['Name'], element['Email'],
                     element['Morning-Session'], element['Afternoon-Session']));
               }
@@ -34,10 +57,10 @@ Package_list(String batch) {
           } catch (e) {
             print(e);
           }
-          print(parcel);
-        } else if (snapshot.data == null) {
-          print("Empty");
-        }
+        }else if(snapshot.data==null)
+          {
+            print("No data");
+          }
         if (snapshot.hasError) {
           print(snapshot.hasError);
         }
@@ -51,7 +74,7 @@ Package_list(String batch) {
                   physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: (parcel.length <= 11) ? parcel.length : 11,
+                  itemCount: (parcel.length <= 11) ? parcel.length : parcel.length,
                   itemBuilder: (context, index) {
                     return Column(
                       children: (snapshot.data != null)
