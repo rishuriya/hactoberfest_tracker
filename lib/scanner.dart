@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'list/list.dart';
 class Scanner extends StatefulWidget {
   const Scanner({Key? key}) : super(key: key);
 
@@ -12,11 +16,13 @@ class Scanner extends StatefulWidget {
 }
 class _ScannerState extends State<Scanner> {
   ScanResult? scanResult;
-
+  String dropdownvalue_class = '___Select___';
+  var batch =  ["___Select___","Morning","Afternoon","Both"];
   final _flashOnController = TextEditingController(text: 'Flash on');
   final _flashOffController = TextEditingController(text: 'Flash off');
   final _cancelController = TextEditingController(text: 'Cancel');
-
+  DateTime time=DateTime.now();
+  DateTime dt2 = DateTime.parse("2022-10-22 21:00:00");
   final _aspectTolerance = 0.00;
   var _numberOfCameras = 0;
   final _selectedCamera = -1;
@@ -31,16 +37,65 @@ class _ScannerState extends State<Scanner> {
   @override
   void initState() {
     super.initState();
-
+    
     Future.delayed(Duration.zero, () async {
       _numberOfCameras = await BarcodeScanner.numberOfCameras;
       setState(() {});
     });
   }
+  List _items = [];
 
+// Fetch content from the json file
+//   Future<void> readJson() async {
+//     final String response = await rootBundle.loadString('assets/file.json');
+//     final data = await json.decode(response);
+//     setState(() {
+//       _items = data["items"];
+//     });
+//     for (int i=0;_items.length>i;i++) {
+//       FirebaseFirestore.instance
+//           .collection('hacktober-2022').doc(_items[i]["email"])
+//           .set({
+//         "Name":_items[i]["name"],
+//         "Email": _items[i]["email"],
+//         //"RollNo": _items[i]["formData"]["rollNo"],
+//         "Morning-Session":"",
+//         "Afternoon-Session":""
+//       });
+//
+//     }
+//     //print(_items[0]["formData"][0]["gender"]);
+//   }
+
+  Future<void> data(attendData) async {
+    final jsondata=await json.decode(attendData);
+
+    print(jsondata["id"]);
+     // setState(() {
+     //   _items = data["key"];
+     // });
+     if(dt2.isBefore(DateTime.now())) {
+       FirebaseFirestore.instance
+           .collection('hacktober-2022').doc(jsondata["email"])
+           .update({
+           "Morning-Session":"Attended",
+       });
+       //return _items;
+     }
+     else{
+       FirebaseFirestore.instance
+           .collection('hacktober-2022').doc(jsondata["email"])
+           .update({
+         "Afternoon-Session":"Attended"
+       });
+     }
+  }
   @override
   Widget build(BuildContext context) {
     final scanResult = this.scanResult;
+    if(scanResult!=null) {
+      data(scanResult.rawContent);
+    }
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -53,34 +108,50 @@ class _ScannerState extends State<Scanner> {
             )
           ],
         ),
-        body: ListView(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          children: <Widget>[
-            if (scanResult != null)
-              Card(
-                child: Column(
-                  children: <Widget>[
-                    ListTile(
-                      title: const Text('Result Type'),
-                      subtitle: Text(scanResult.type.toString()),
+        body: SingleChildScrollView(
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+              children:[
+                SizedBox(
+                  height: 20,
+                ),Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     ),
-                    ListTile(
-                      title: const Text('Raw Content'),
-                      subtitle: Text(scanResult.rawContent),
-                    ),
-                    ListTile(
-                      title: const Text('Format'),
-                      subtitle: Text(scanResult.format.toString()),
-                    ),
-                    ListTile(
-                      title: const Text('Format note'),
-                      subtitle: Text(scanResult.formatNote),
-                    ),
-                  ],
+                    value: dropdownvalue_class,
+                    hint: const Text("Source"),
+                    icon: Icon(Icons.keyboard_arrow_down),
+
+                    items: batch.map((String items) {
+                      return DropdownMenuItem(
+                          value: items,
+                          child: Text(items)
+                      );
+                    }
+                    ).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        parcel.clear();
+                        dropdownvalue_class = newValue.toString();
+                      });
+                    },
+
+                  ),
                 ),
-              )
-          ],
+                SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16,),
+                  child: Column(
+                      children:[Package_list(dropdownvalue_class),
+                      Text("data")]
+                  ),
+                ),
+              ],
+          ),
         ),
       ),
     );
