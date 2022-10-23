@@ -68,7 +68,6 @@ class _ScannerState extends State<Scanner> {
     var querySnapshot_std = await collection_std.get();
     for (var queryDocumentSnapshot in querySnapshot_std.docs) {
       var data_std = queryDocumentSnapshot.data();
-
         List<dynamic> row = [];
         row.add(data_std['Name']);
         row.add(data_std['Email']);
@@ -76,7 +75,6 @@ class _ScannerState extends State<Scanner> {
         row.add(data_std['Afternoon-Session']);
         rows.add(row);
         //print(rows);
-
       //print(i);
       i++;
     }
@@ -91,11 +89,12 @@ class _ScannerState extends State<Scanner> {
   Future<void> file(name) async {
     print(name);
     String dir =
-        "${(await getExternalStorageDirectory())?.absolute.path!}/documents";
+        "${(await getExternalStorageDirectory())?.absolute.path!}/";
     //print(dir);
     String file = "$dir";
-    File f = new File(file + "filename.csv");
+    File f = File(file + "filename.csv");
     var t = await f.writeAsString(name);
+    print(t);
   }
 //Fetch content from the json file
 //   Future<void> readJson() async {
@@ -171,8 +170,7 @@ class _ScannerState extends State<Scanner> {
             )
           ],
         ),
-        body: SingleChildScrollView(
-          child: ListView(
+        body: ListView(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             children: [
@@ -212,7 +210,7 @@ class _ScannerState extends State<Scanner> {
               ),
             ],
           ),
-        ),
+
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             await getcsv();

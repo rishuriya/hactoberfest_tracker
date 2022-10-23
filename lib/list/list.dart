@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hactoberfest_tracker/list/model.dart';
 import 'package:flutter/material.dart';
-
+int Total_attendee=0;
 List<Attendence> parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
 var time;
 Package_list(String batch) {
@@ -39,20 +39,24 @@ Package_list(String batch) {
                       element['Afternoon-Session']));
                 }
               }
+
             } catch (e) {
               print(e);
             }
+            Total_attendee=parcel.length-1;
+            print(Total_attendee);
             print(parcel);
           }
         }else if (time=="both" && snapshot.data != null && snapshot.connectionState==ConnectionState.active) {
           try {
-            print(snapshot.data!.docs.length);
+            //print(snapshot.data!.docs.length);
             for (var element in snapshot.data!.docs) {
               if (element["Morning-Session"] == "Attended" && element["Afternoon-Session"]=="Attended") {
                 parcel.add(Attendence(element['Name'], element['Email'],
                     element['Morning-Session'], element['Afternoon-Session']));
               }
             }
+            Total_attendee=parcel.length;
 
           } catch (e) {
             print(e);
@@ -66,10 +70,18 @@ Package_list(String batch) {
         }
         return Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 30,
+              horizontal: 10,
             ),
             child: Column(
               children: [
+                Container(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 50),
+                    child:Text(
+                      Total_attendee==null?0.toString():Total_attendee!.toString()
+                    ),
+                  ),
+                ),
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
