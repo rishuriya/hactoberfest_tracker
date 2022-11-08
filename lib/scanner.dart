@@ -336,8 +336,10 @@ class _ScannerState extends State<Scanner> {
                   final selectedDate = await showDatePicker(
                     context: context,
                     initialDate: currentDate,
-                    firstDate: currentDate,
+                    firstDate: DateTime(2022,11),
                     lastDate: DateTime(currentDate.year+5),
+                    selectableDayPredicate: (DateTime val) =>
+                    (val.year == 2022 && val.day >= 9 && val.month == 11) || (val.year == 2022 && val.day <= 10 && val.month == 12) ? true : false,
                   );
                   setState(() {
                     if(selectedDate != null){
