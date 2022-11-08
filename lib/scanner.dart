@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'list/list.dart';
 
 class Scanner extends StatefulWidget {
@@ -23,6 +24,7 @@ class Scanner extends StatefulWidget {
 
 class _ScannerState extends State<Scanner> {
   ScanResult? scanResult;
+  var _selectedDate=DateTime.now();
   String dropdownvalue_class = '___Select___';
   var batch = ["___Select___", "Morning", "Afternoon", "Both"];
   final _flashOnController = TextEditingController(text: 'Flash on');
@@ -68,6 +70,7 @@ class _ScannerState extends State<Scanner> {
     var querySnapshot_std = await collection_std.get();
     for (var queryDocumentSnapshot in querySnapshot_std.docs) {
       var data_std = queryDocumentSnapshot.data();
+      if(data_std["Morning-Session"]=="Attended" || data_std["Afternoon-Session"]=="Attended") {
         List<dynamic> row = [];
         row.add(data_std['Name']);
         row.add(data_std['Email']);
@@ -75,6 +78,7 @@ class _ScannerState extends State<Scanner> {
         row.add(data_std['Afternoon-Session']);
         rows.add(row);
         //print(rows);
+      }
       //print(i);
       i++;
     }
@@ -154,6 +158,7 @@ class _ScannerState extends State<Scanner> {
 
   @override
   Widget build(BuildContext context) {
+    var _currentIndex=1;
     final scanResult = this.scanResult;
     if (scanResult != null) {
       data(scanResult.rawContent);
@@ -174,6 +179,47 @@ class _ScannerState extends State<Scanner> {
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             children: [
+              SizedBox(
+                height: 20,
+              ),
+              Padding(padding: const EdgeInsets.all(16),
+                  child:SizedBox(
+                      width: 400.0,
+                      height: 200.0,
+                      child: Card(
+                          elevation: 2,
+                          shadowColor: Colors.black,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: InkWell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(6),
+                              child: CalendarTimeline(
+                                showYears: true,
+                                initialDate: _selectedDate,
+                                firstDate:
+                                DateTime.now().subtract(Duration(days: 7)),
+                                lastDate: DateTime.now().add(Duration(days: 1095)),
+                                onDateSelected: (date) {
+                                  setState(() {
+                                    _selectedDate = date!;
+                                  });
+                                },
+                                leftMargin: 0,
+                                monthColor: Colors.black87,
+                                dayColor: Colors.black,
+                                dayNameColor: Colors.white,
+                                activeDayColor: Colors.white,
+                                activeBackgroundDayColor: Colors.deepPurpleAccent,
+                                dotsColor: Colors.white,
+                                selectableDayPredicate: (date) => date.day != 23,
+                                locale: 'en',
+                              ),
+                            ),
+                          ))),
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -218,6 +264,39 @@ class _ScannerState extends State<Scanner> {
           icon: const Icon(Icons.save),
           label: const Text("Save"),
         ),
+          bottomNavigationBar:SalomonBottomBar(
+            currentIndex: _currentIndex,
+            onTap: (i) { setState(() => _currentIndex = i);
+            if(_currentIndex==1)
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Scanner()),
+              );
+            }},
+            items: [
+              /// Home
+              SalomonBottomBarItem(
+                icon: Icon(Icons.home),
+                title: Text("Home"),
+                selectedColor: Colors.purple,
+              ),
+
+              /// Likes
+              SalomonBottomBarItem(
+                icon: Icon(Icons.favorite_border),
+                title: Text("Likes"),
+                selectedColor: Colors.pink,
+              ),
+
+              /// Search
+              SalomonBottomBarItem(
+                icon: Icon(Icons.search),
+                title: Text("Search"),
+                selectedColor: Colors.orange,
+              ),
+            ],
+          )
       ),
     );
   }

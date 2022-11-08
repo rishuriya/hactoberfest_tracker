@@ -41,6 +41,8 @@ dependencies:
   permission_handler: ^10.2.0
   file_saver: ^0.1.1
   path_provider: ^2.0.11
+  calendar_timeline: ^1.0.5
+  salomon_bottom_bar: ^3.3.1
 
 dev_dependencies:
   flutter_test:
