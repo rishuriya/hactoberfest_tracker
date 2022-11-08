@@ -76,10 +76,8 @@ Package_list(String batch) {
               children: [
                 Container(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: 50),
-                    child:Text(
-                      Total_attendee==null?0.toString():Total_attendee!.toString()
-                    ),
+                    constraints: const BoxConstraints(minHeight: 50),
+                    child:Text("Count: ${Total_attendee==null?0.toString():Total_attendee!.toString()}"),
                   ),
                 ),
                 ListView.builder(
