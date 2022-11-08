@@ -9,6 +9,8 @@ import 'package:csv/csv.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hactoberfest_tracker/Home.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
@@ -25,6 +27,8 @@ class Scanner extends StatefulWidget {
 class _ScannerState extends State<Scanner> {
   ScanResult? scanResult;
   var _selectedDate=DateTime.now();
+  int _selectedIndex =0;
+  final List<String> _options = ['Present', 'Absent', 'Both'];
   String dropdownvalue_class = '___Select___';
   var batch = ["___Select___", "Morning", "Afternoon", "Both"];
   final _flashOnController = TextEditingController(text: 'Flash on');
@@ -36,6 +40,7 @@ class _ScannerState extends State<Scanner> {
   final _selectedCamera = -1;
   final _useAutoFocus = true;
   final _autoEnableFlash = false;
+
 
   static final _possibleFormats = BarcodeFormat.values.toList()
     ..removeWhere((e) => e == BarcodeFormat.unknown);
@@ -163,6 +168,7 @@ class _ScannerState extends State<Scanner> {
     if (scanResult != null) {
       data(scanResult.rawContent);
     }
+    var _choiceIndex;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -179,50 +185,18 @@ class _ScannerState extends State<Scanner> {
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             children: [
-              SizedBox(
-                height: 20,
+              const SizedBox(
+                height: 10,
               ),
-              Padding(padding: const EdgeInsets.all(16),
-                  child:SizedBox(
-                      width: 400.0,
-                      height: 200.0,
-                      child: Card(
-                          elevation: 2,
-                          shadowColor: Colors.black,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(6),
-                              child: CalendarTimeline(
-                                showYears: true,
-                                initialDate: _selectedDate,
-                                firstDate:
-                                DateTime.now().subtract(Duration(days: 7)),
-                                lastDate: DateTime.now().add(Duration(days: 1095)),
-                                onDateSelected: (date) {
-                                  setState(() {
-                                    _selectedDate = date!;
-                                  });
-                                },
-                                leftMargin: 0,
-                                monthColor: Colors.black87,
-                                dayColor: Colors.black,
-                                dayNameColor: Colors.white,
-                                activeDayColor: Colors.white,
-                                activeBackgroundDayColor: Colors.deepPurpleAccent,
-                                dotsColor: Colors.white,
-                                selectableDayPredicate: (date) => date.day != 23,
-                                locale: 'en',
-                              ),
-                            ),
-                          ))),
+              buildDateField(context),
+              const SizedBox(
+                height: 10,
               ),
               SizedBox(
-                height: 20,
+                height: 50,
+                child: _buildChips(),
               ),
+              const SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: DropdownButtonFormField<String>(
@@ -267,11 +241,11 @@ class _ScannerState extends State<Scanner> {
           bottomNavigationBar:SalomonBottomBar(
             currentIndex: _currentIndex,
             onTap: (i) { setState(() => _currentIndex = i);
-            if(_currentIndex==1)
+            if(_currentIndex==1 || _currentIndex==0 )
             {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Scanner()),
+                MaterialPageRoute(builder: (context) => const Home()),
               );
             }},
             items: [
@@ -297,6 +271,89 @@ class _ScannerState extends State<Scanner> {
               ),
             ],
           )
+      ),
+    );
+  }
+  Widget _buildChips() {
+    List<Widget> chips = [];
+
+    for (int i = 0; i < _options.length; i++) {
+      ChoiceChip choiceChip = ChoiceChip(
+        selected: _selectedIndex == i,
+        label: Text(_options[i], style: TextStyle(color: _selectedIndex == i ?Colors.white:Colors.black)),
+        avatar: _selectedIndex == i ? const Icon(Icons.radio_button_checked):const Icon(Icons.radio_button_unchecked),
+        elevation: 2,
+        pressElevation: 5,
+        shadowColor: Colors.blue,
+        backgroundColor: Colors.grey.shade300,
+        selectedColor: Colors.blue,
+        onSelected: (bool selected) {
+          setState(() {
+            if (selected) {
+              _selectedIndex = i;
+            }
+          });
+        },
+      );
+
+      chips.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: choiceChip
+          )
+      );
+    }
+
+    return Center(
+      child: Wrap(
+        // This next line does the trick.
+        spacing: 1,
+        children: chips,
+      ),
+    );
+  }
+  Widget buildDateField(BuildContext context){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                DateFormat('dd-MM-yyyy').format(_selectedDate),
+                style: TextStyle(
+                    fontSize: 28,
+                  fontWeight: FontWeight.w400
+                ),
+              ),
+
+              TextButton(
+                child: const Icon(Icons.calendar_today_sharp, color: Colors.blue,),
+                onPressed: () async{
+                  final currentDate = DateTime.now();
+                  final selectedDate = await showDatePicker(
+                    context: context,
+                    initialDate: currentDate,
+                    firstDate: currentDate,
+                    lastDate: DateTime(currentDate.year+5),
+                  );
+                  setState(() {
+                    if(selectedDate != null){
+                      _selectedDate = selectedDate;
+                    }
+                  });
+                },
+              ),
+
+            ],
+          ),
+          const Text(
+            'Date',
+            style: TextStyle(fontSize: 18.0),
+          ),
+        ],
       ),
     );
   }

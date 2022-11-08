@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.amber,
-      body: Center(
+      body: const Center(
         child:
         Text("77",
         style: TextStyle(
@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
       bottomNavigationBar:SalomonBottomBar(
         currentIndex: _currentIndex,
         onTap: (i) { setState(() => _currentIndex = i);
-        if(_currentIndex==1)
+        if(_currentIndex==2)
           {
           Navigator.push(
           context,

@@ -20,7 +20,7 @@ class Attendence extends StatelessWidget {
         },
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Color(0xf2C86733).withOpacity(0.4),
+            color: Colors.grey.shade300,
             borderRadius: BorderRadius.circular(10),
           ),
           child: FutureBuilder(
@@ -56,7 +56,5 @@ class Attendence extends StatelessWidget {
           ),
         )
     ); }
-
-
 
 }
