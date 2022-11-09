@@ -10,10 +10,10 @@ import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hactoberfest_tracker/Home.dart';
+import 'package:hactoberfest_tracker/scan/scanning.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'list/list.dart';
 
@@ -27,8 +27,42 @@ class Scanner extends StatefulWidget {
 class _ScannerState extends State<Scanner> {
   ScanResult? scanResult;
   var _selectedDate=DateTime.now();
+  var date =DateTime.now();
   int _selectedIndex =0;
   final List<String> _options = ['Present', 'Absent', 'Both'];
+  final List work_date=["09-11-22",
+    "10-11-22",
+    "11-11-22",
+    "12-11-22",
+    "13-11-22",
+    "14-11-22",
+    "15-11-22",
+    "16-11-22",
+    "17-11-22",
+    "18-11-22",
+    "19-11-22",
+    "20-11-22",
+    "21-11-22",
+    "22-11-22",
+    "23-11-22",
+    "24-11-22",
+    "25-11-22",
+    "26-11-22",
+    "27-11-22",
+    "28-11-22",
+    "29-11-22",
+    "30-11-22",
+    "01-12-22",
+    "02-12-22",
+    "03-12-22",
+    "04-12-22",
+    "05-12-22",
+    "06-12-22",
+    "07-12-22",
+    "08-12-22",
+    "09-12-22",
+    "10-12-22",
+    "11-12-22"];
   String dropdownvalue_class = '___Select___';
   var batch = ["___Select___", "Morning", "Afternoon", "Both"];
   final _flashOnController = TextEditingController(text: 'Flash on');
@@ -58,112 +92,103 @@ class _ScannerState extends State<Scanner> {
   }
 
   List _items = [];
-  Future<void> getcsv() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-    ].request();
-    List<List<dynamic>> rows = [];
-    List<dynamic> row = [];
-    row.add("Name");
-    row.add("Email");
-    row.add("Morning-Session");
-    row.add("Afternoon-Session");
-    rows.add(row);
-    var i = 1;
-    var collection_std =
-        FirebaseFirestore.instance.collection('hacktober-2022');
-    var querySnapshot_std = await collection_std.get();
-    for (var queryDocumentSnapshot in querySnapshot_std.docs) {
-      var data_std = queryDocumentSnapshot.data();
-      if(data_std["Morning-Session"]=="Attended" || data_std["Afternoon-Session"]=="Attended") {
-        List<dynamic> row = [];
-        row.add(data_std['Name']);
-        row.add(data_std['Email']);
-        row.add(data_std['Morning-Session']);
-        row.add(data_std['Afternoon-Session']);
-        rows.add(row);
-        //print(rows);
-      }
-      //print(i);
-      i++;
-    }
-//store file in documents folder
-
-    String? csv;
-// convert rows to String and write as csv file
-    csv = const ListToCsvConverter().convert(rows);
-    file(csv);
-
-  }
-  Future<void> file(name) async {
-    print(name);
-    String dir =
-        "${(await getExternalStorageDirectory())?.absolute.path!}/";
-    //print(dir);
-    String file = "$dir";
-    File f = File(file + "filename.csv");
-    var t = await f.writeAsString(name);
-    print(t);
-  }
-//Fetch content from the json file
-//   Future<void> readJson() async {
-//     final String response = await rootBundle.loadString('assets/file.json');
-//     final data = await json.decode(response);
-//     setState(() {
-//       _items = data["items"];
-//     });
-//     for (int i=0;_items.length>i;i++) {
-//       FirebaseFirestore.instance
-//           .collection('hacktober-2022').doc(_items[i]["email"])
-//           .set({
-//         "id":_items[i]["id"],
-//         "Name":_items[i]["name"],
-//         "Email": _items[i]["email"],
-//         //"RollNo": _items[i]["formData"]["rollNo"],
-//         "Morning-Session":"",
-//         "Afternoon-Session":""
-//       });
-//
+//   Future<void> getcsv() async {
+//     Map<Permission, PermissionStatus> statuses = await [
+//       Permission.storage,
+//     ].request();
+//     List<List<dynamic>> rows = [];
+//     List<dynamic> row = [];
+//     row.add("Name");
+//     row.add("Email");
+//     row.add("Morning-Session");
+//     row.add("Afternoon-Session");
+//     rows.add(row);
+//     var i = 1;
+//     var collection_std =
+//         FirebaseFirestore.instance.collection('hacktober-2022');
+//     var querySnapshot_std = await collection_std.get();
+//     for (var queryDocumentSnapshot in querySnapshot_std.docs) {
+//       var data_std = queryDocumentSnapshot.data();
+//       if(data_std["Morning-Session"]=="Attended" || data_std["Afternoon-Session"]=="Attended") {
+//         List<dynamic> row = [];
+//         row.add(data_std['Name']);
+//         row.add(data_std['Email']);
+//         row.add(data_std['Morning-Session']);
+//         row.add(data_std['Afternoon-Session']);
+//         rows.add(row);
+//         //print(rows);
+//       }
+//       //print(i);
+//       i++;
 //     }
-//     //print(_items[0]["formData"][0]["gender"]);
+// //store file in documents folder
+//
+//     String? csv;
+// // convert rows to String and write as csv file
+//     csv = const ListToCsvConverter().convert(rows);
+//     file(csv);
+//
 //   }
+//   Future<void> file(name) async {
+//     print(name);
+//     String dir =
+//         "${(await getExternalStorageDirectory())?.absolute.path!}/";
+//     //print(dir);
+//     String file = "$dir";
+//     File f = File(file + "filename.csv");
+//     var t = await f.writeAsString(name);
+//     print(t);
+//   }
+
+// Fetch content from the json file
+  Future<void> readJson() async {
+    final String response = await rootBundle.loadString('assets/file.json');
+    final data = await json.decode(response);
+    setState(() {
+      _items = data["items"];
+    });
+      for(int i=0;_items.length>i;i++) {
+
+        FirebaseFirestore.instance
+            .collection('workshop-2022').doc(_items[i]["payment id"])
+            .set({
+          "id": _items[i]["payment id"],
+          "Name": _items[i]["full_name"],
+          "Email": _items[i]["email"],
+          "RollNo": _items[i]["amrita_roll_number"],
+          "WhatsappNo": _items[i]["whatsapp_number"],
+        });
+        for(int j=0;work_date.length>j;j++) {
+          FirebaseFirestore.instance
+              .collection('workshop-2022').doc(_items[i]["payment id"])
+              .collection("Date").doc(work_date[j])
+              .set({
+            "Attended": false,
+          });
+        }
+    }
+
+  }
 
   Future<void> data(attendData) async {
     final jsondata = await json.decode(attendData);
     DateTime time = DateTime.now();
-    DateTime dt2 = DateTime.parse("2022-10-23 12:00:00");
-    print(time);
-    print(jsondata["id"]);
-    // setState(() {
-    //   _items = data["key"];
-    // });
-    if (time.isBefore(dt2)) {
-      print("hello");
+
       FirebaseFirestore.instance
-          .collection('hacktober-2022')
-          .doc(jsondata["email"])
-          .update({
-        "Morning-Session": "Attended",
-        "Morning-checkin":time,
+          .collection('workshop-2022')
+          .doc(jsondata["payment id"]).collection("Date").doc("${time.day}-${time.month}-${time.year}")
+          .set({
+        "Attended": true,
+        "time":time,
       }).onError((error, stackTrace) => {
          throw "Error:$error"
       });
       //return _items;
-    } else {
-      print(dt2.isBefore(DateTime.now()));
-      FirebaseFirestore.instance
-          .collection('hacktober-2022')
-          .doc(jsondata["email"])
-          .update({"Afternoon-Session": "Attended",
-      "Afternoon-checkin":time}).onError((error, stackTrace) => {
-        throw "Error:$error"
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var _currentIndex=1;
+    var _currentIndex=2;
     final scanResult = this.scanResult;
     if (scanResult != null) {
       data(scanResult.rawContent);
@@ -225,29 +250,35 @@ class _ScannerState extends State<Scanner> {
                   right: 16,
                 ),
                 child: Column(children: [
-                  Package_list(dropdownvalue_class),
+                  Package_list(_selectedIndex,DateFormat('dd-MM-yyyy').format(_selectedDate)),
                 ]),
               ),
             ],
           ),
 
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () async {
-            await getcsv();
-          },
-          icon: const Icon(Icons.save),
-          label: const Text("Save"),
-        ),
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: () async {
+        //     await getcsv();
+        //   },
+        //   icon: const Icon(Icons.save),
+        //   label: const Text("Save"),
+        // ),
           bottomNavigationBar:SalomonBottomBar(
             currentIndex: _currentIndex,
             onTap: (i) { setState(() => _currentIndex = i);
-            if(_currentIndex==1 || _currentIndex==0 )
-            {
+            if(_currentIndex==0 ) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Home()),
               );
-            }},
+            }
+              if(_currentIndex==1 ) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const scan()),
+                );
+              }
+            },
             items: [
               /// Home
               SalomonBottomBarItem(
@@ -258,14 +289,14 @@ class _ScannerState extends State<Scanner> {
 
               /// Likes
               SalomonBottomBarItem(
-                icon: Icon(Icons.favorite_border),
-                title: Text("Likes"),
+                icon: Icon(Icons.qr_code),
+                title: Text("Scan"),
                 selectedColor: Colors.pink,
               ),
 
               /// Search
               SalomonBottomBarItem(
-                icon: Icon(Icons.search),
+                icon: Icon(Icons.data_usage_sharp),
                 title: Text("Search"),
                 selectedColor: Colors.orange,
               ),
@@ -293,6 +324,7 @@ class _ScannerState extends State<Scanner> {
               _selectedIndex = i;
             }
           });
+          parcel.clear();
         },
       );
 
@@ -346,6 +378,7 @@ class _ScannerState extends State<Scanner> {
                       _selectedDate = selectedDate;
                     }
                   });
+                  parcel.clear();
                 },
               ),
 

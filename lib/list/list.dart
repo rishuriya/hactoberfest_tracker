@@ -2,41 +2,40 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hactoberfest_tracker/list/model.dart';
 import 'package:flutter/material.dart';
 int Total_attendee=0;
-List<Attendence> parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
-var time;
-Package_list(String batch) {
-  if (batch == "Morning") {
+List<Attendence> parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
+var criteria;
+Package_list(int batch,String date) {
+  print(batch);
+  if (batch == 0) {
     parcel.clear();
-    time = "Morning-Session";
-    parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
-  } else if (batch == "Afternoon") {
+    criteria = true;
+    parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
+  } else if (batch == 1) {
     parcel.clear();
-    time = "Afternoon-Session";
-    parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
-  } else if(batch=="___Select___") {
-    time="null";
+    criteria = false;
+    parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
+  } else if(batch==2) {
+    criteria="All";
     parcel.clear();
-  }
-  else
-{
-    parcel.clear();
-    time="both";
-    parcel = [Attendence("Name", "Email", "Morning", "Afternoon")];
+    parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   }
   return
       StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('hacktober-2022').snapshots(),
+      stream: FirebaseFirestore.instance.collection('workshop-2022').snapshots(),
       builder: (context, snapshot) {
-        if(time=="Morning-Session" || time=="Afternoon-Session") {
+        if(batch<2) {
           if (snapshot.data != null &&
               snapshot.connectionState == ConnectionState.active) {
             try {
               print(snapshot.data!.docs.length);
               for (var element in snapshot.data!.docs) {
-                if (element[time] == "Attended") {
+                print(element["09-11-2022"]);
+                print("sfjhhd");
+                print(element["Date"]['09-11-2022']);
+                if (element["date"] == criteria) {
                   parcel.add(Attendence(element['Name'], element['Email'],
-                      element['Morning-Session'],
-                      element['Afternoon-Session']));
+                      element['RollNo'],
+                      element['WhatsappNo']));
                 }
               }
 
@@ -44,19 +43,17 @@ Package_list(String batch) {
               print(e);
             }
             Total_attendee=parcel.length-1;
-            print(Total_attendee);
+            //print(Total_attendee);
             print(parcel);
           }
-        }else if (time=="both" && snapshot.data != null && snapshot.connectionState==ConnectionState.active) {
+        }else if (batch==2 && snapshot.data != null && snapshot.connectionState==ConnectionState.active) {
           try {
-            //print(snapshot.data!.docs.length);
+            print(snapshot.data!.docs.length);
             for (var element in snapshot.data!.docs) {
-              if (element["Morning-Session"] == "Attended" && element["Afternoon-Session"]=="Attended") {
                 parcel.add(Attendence(element['Name'], element['Email'],
-                    element['Morning-Session'], element['Afternoon-Session']));
-              }
+                    element['RollNo'], element['WhatsappNo']));
             }
-            Total_attendee=parcel.length;
+            Total_attendee=parcel.length-1;
 
           } catch (e) {
             print(e);
