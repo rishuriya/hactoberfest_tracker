@@ -85,6 +85,7 @@ class _ScannerState extends State<Scanner> {
   void initState() {
     super.initState();
     //readJson();
+    parcel.clear();
     Future.delayed(Duration.zero, () async {
       _numberOfCameras = await BarcodeScanner.numberOfCameras;
       setState(() {});
@@ -92,119 +93,78 @@ class _ScannerState extends State<Scanner> {
   }
 
   List _items = [];
-//   Future<void> getcsv() async {
-//     Map<Permission, PermissionStatus> statuses = await [
-//       Permission.storage,
-//     ].request();
-//     List<List<dynamic>> rows = [];
-//     List<dynamic> row = [];
-//     row.add("Name");
-//     row.add("Email");
-//     row.add("Morning-Session");
-//     row.add("Afternoon-Session");
-//     rows.add(row);
-//     var i = 1;
-//     var collection_std =
-//         FirebaseFirestore.instance.collection('hacktober-2022');
-//     var querySnapshot_std = await collection_std.get();
-//     for (var queryDocumentSnapshot in querySnapshot_std.docs) {
-//       var data_std = queryDocumentSnapshot.data();
-//       if(data_std["Morning-Session"]=="Attended" || data_std["Afternoon-Session"]=="Attended") {
-//         List<dynamic> row = [];
-//         row.add(data_std['Name']);
-//         row.add(data_std['Email']);
-//         row.add(data_std['Morning-Session']);
-//         row.add(data_std['Afternoon-Session']);
-//         rows.add(row);
-//         //print(rows);
-//       }
-//       //print(i);
-//       i++;
-//     }
-// //store file in documents folder
-//
-//     String? csv;
-// // convert rows to String and write as csv file
-//     csv = const ListToCsvConverter().convert(rows);
-//     file(csv);
-//
-//   }
-//   Future<void> file(name) async {
-//     print(name);
-//     String dir =
-//         "${(await getExternalStorageDirectory())?.absolute.path!}/";
-//     //print(dir);
-//     String file = "$dir";
-//     File f = File(file + "filename.csv");
-//     var t = await f.writeAsString(name);
-//     print(t);
-//   }
+
 
 // Fetch content from the json file
-  Future<void> readJson() async {
-    final String response = await rootBundle.loadString('assets/file.json');
-    final data = await json.decode(response);
-    setState(() {
-      _items = data["items"];
-    });
-      for(int i=0;_items.length>i;i++) {
+//   Future<void> readJson() async {
+//     final String response = await rootBundle.loadString('assets/file.json');
+//     final data = await json.decode(response);
+//     setState(() {
+//       _items = data["items"];
+//     });
+//       for(int i=0;_items.length>i;i++) {
+//
+//         FirebaseFirestore.instance
+//             .collection('workshop-2022').doc(_items[i]["id"])
+//             .set({
+//           "Gender":_items[i]["Gender"],
+//           "Hostel":_items[i]["Hostel"],
+//           "id": _items[i]["id"],
+//           "Name": _items[i]["Name"],
+//           "Email": _items[i]["Email"],
+//           "RollNo": _items[i]["RollNo"],
+//           "WhatsappNo": _items[i]["WhatsappNo"],
+//           "09-11-22": "False",
+//           "10-11-22": "True",
+//           "11-11-22": "False",
+//           "12-11-22": "False",
+//           "13-11-22": "False",
+//           "14-11-22": "False",
+//           "15-11-22": "False",
+//           "16-11-22": "False",
+//           "17-11-22": "False",
+//           "18-11-22": "False",
+//           "19-11-22": "False",
+//           "20-11-22": "False",
+//           "21-11-22": "False",
+//           "22-11-22": "False",
+//           "23-11-22": "False",
+//           "24-11-22": "False",
+//           "25-11-22": "False",
+//           "26-11-22": "False",
+//           "27-11-22": "False",
+//           "28-11-22": "False",
+//           "29-11-22": "False",
+//           "30-11-22": "False",
+//           "01-12-22": "False",
+//           "02-12-22": "False",
+//           "03-12-22": "False",
+//           "04-12-22": "False",
+//           "05-12-22": "False",
+//           "06-12-22": "False",
+//           "07-12-22": "False",
+//           "08-12-22": "False",
+//           "09-12-22": "False",
+//           "10-12-22": "False",
+//           "11-12-22": "False"
+//         }).onError((error, stackTrace) => print(error));
+// print(_items[i]["Name"]);
+//     }
+//
+//   }
 
-        FirebaseFirestore.instance
-            .collection('workshop-2022').doc(_items[i]["payment id"])
-            .set({
-          "id": _items[i]["payment id"],
-          "Name": _items[i]["full_name"],
-          "Email": _items[i]["email"],
-          "RollNo": _items[i]["amrita_roll_number"],
-          "WhatsappNo": _items[i]["whatsapp_number"],
-        });
-        for(int j=0;work_date.length>j;j++) {
-          FirebaseFirestore.instance
-              .collection('workshop-2022').doc(_items[i]["payment id"])
-              .collection("Date").doc(work_date[j])
-              .set({
-            "Attended": false,
-          });
-        }
-    }
 
-  }
-
-  Future<void> data(attendData) async {
-    final jsondata = await json.decode(attendData);
-    DateTime time = DateTime.now();
-
-      FirebaseFirestore.instance
-          .collection('workshop-2022')
-          .doc(jsondata["payment id"]).collection("Date").doc("${time.day}-${time.month}-${time.year}")
-          .set({
-        "Attended": true,
-        "time":time,
-      }).onError((error, stackTrace) => {
-         throw "Error:$error"
-      });
-      //return _items;
-  }
 
   @override
   Widget build(BuildContext context) {
     var _currentIndex=2;
     final scanResult = this.scanResult;
-    if (scanResult != null) {
-      data(scanResult.rawContent);
-    }
     var _choiceIndex;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Hacktober Attendence'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.camera),
-              tooltip: 'Scan',
-              onPressed: _scan,
-            )
-          ],
+          backgroundColor: Colors.amber,
+          title: const Text('amFOSS'),
         ),
         body: ListView(
             scrollDirection: Axis.vertical,
@@ -222,27 +182,6 @@ class _ScannerState extends State<Scanner> {
                 child: _buildChips(),
               ),
               const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                  ),
-                  value: dropdownvalue_class,
-                  hint: const Text("Source"),
-                  icon: Icon(Icons.keyboard_arrow_down),
-                  items: batch.map((String items) {
-                    return DropdownMenuItem(value: items, child: Text(items));
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      parcel.clear();
-                      dropdownvalue_class = newValue.toString();
-                    });
-                  },
-                ),
-              ),
               SizedBox(height: 15),
               Padding(
                 padding: const EdgeInsets.only(
@@ -250,7 +189,7 @@ class _ScannerState extends State<Scanner> {
                   right: 16,
                 ),
                 child: Column(children: [
-                  Package_list(_selectedIndex,DateFormat('dd-MM-yyyy').format(_selectedDate)),
+                  Package_list(_selectedIndex,DateFormat('dd-MM-yy').format(_selectedDate)),
                 ]),
               ),
             ],
@@ -267,9 +206,8 @@ class _ScannerState extends State<Scanner> {
             currentIndex: _currentIndex,
             onTap: (i) { setState(() => _currentIndex = i);
             if(_currentIndex==0 ) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Home()),
+              Navigator.pop(
+                context
               );
             }
               if(_currentIndex==1 ) {
@@ -297,7 +235,7 @@ class _ScannerState extends State<Scanner> {
               /// Search
               SalomonBottomBarItem(
                 icon: Icon(Icons.data_usage_sharp),
-                title: Text("Search"),
+                title: Text("Query"),
                 selectedColor: Colors.orange,
               ),
             ],
@@ -315,9 +253,9 @@ class _ScannerState extends State<Scanner> {
         avatar: _selectedIndex == i ? const Icon(Icons.radio_button_checked):const Icon(Icons.radio_button_unchecked),
         elevation: 2,
         pressElevation: 5,
-        shadowColor: Colors.blue,
+        shadowColor: Colors.amber,
         backgroundColor: Colors.grey.shade300,
-        selectedColor: Colors.blue,
+        selectedColor: Colors.amber,
         onSelected: (bool selected) {
           setState(() {
             if (selected) {
@@ -362,7 +300,7 @@ class _ScannerState extends State<Scanner> {
               ),
 
               TextButton(
-                child: const Icon(Icons.calendar_today_sharp, color: Colors.blue,),
+                child: const Icon(Icons.calendar_today_sharp, color: Colors.amber,),
                 onPressed: () async{
                   final currentDate = DateTime.now();
                   final selectedDate = await showDatePicker(

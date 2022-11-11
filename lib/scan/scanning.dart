@@ -4,6 +4,7 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../scanner.dart';
@@ -52,7 +53,7 @@ class _scanState extends State<scan> {
           .collection('workshop-2022')
           .doc(attendData)
           .update({
-        "${time.day}-${time.month}-${time.year}": true,
+        DateFormat('dd-MM-yy').format(time): "True",
       }).onError((error, stackTrace) =>
       {
         throw "Error:$error"
@@ -72,11 +73,13 @@ class _scanState extends State<scan> {
       data(scanResult.rawContent);
     }
     return Scaffold(
+      backgroundColor: Colors.amber,
         body: Center(
-        child: LoadingAnimationWidget.dotsTriangle(
-        color: Colors.white,
-        size: 200,
-    ),
+          child: LoadingAnimationWidget.twistingDots(
+            leftDotColor: const Color(0xFF1A1A3F),
+            rightDotColor: const Color(0xFFEA3799),
+            size: 30,
+          ),
     ),
     );
   }

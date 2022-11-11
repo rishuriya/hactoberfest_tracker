@@ -5,14 +5,14 @@ int Total_attendee=0;
 List<Attendence> parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
 var criteria;
 Package_list(int batch,String date) {
-  print(batch);
+  print(date);
   if (batch == 0) {
     parcel.clear();
-    criteria = true;
+    criteria = "True";
     parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   } else if (batch == 1) {
     parcel.clear();
-    criteria = false;
+    criteria = "False";
     parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   } else if(batch==2) {
     criteria="All";
@@ -20,6 +20,7 @@ Package_list(int batch,String date) {
     parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   }
   return
+
       StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('workshop-2022').snapshots(),
       builder: (context, snapshot) {
@@ -29,10 +30,7 @@ Package_list(int batch,String date) {
             try {
               print(snapshot.data!.docs.length);
               for (var element in snapshot.data!.docs) {
-                print(element["09-11-2022"]);
-                print("sfjhhd");
-                print(element["Date"]['09-11-2022']);
-                if (element["date"] == criteria) {
+                if (element["${date}"] == criteria) {
                   parcel.add(Attendence(element['Name'], element['Email'],
                       element['RollNo'],
                       element['WhatsappNo']));
