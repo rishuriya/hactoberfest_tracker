@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 int Total_attendee=0;
 List<Attendence> parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
 var criteria;
-Package_list(int batch,String date) {
+var gender_criteria;
+Package_list(int batch,int gender,String date) {
   print(date);
   if (batch == 0) {
     parcel.clear();
@@ -19,12 +20,45 @@ Package_list(int batch,String date) {
     parcel.clear();
     parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   }
+  if (gender == 0) {
+    parcel.clear();
+     gender_criteria= "Male";
+    parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
+  } else if (gender == 1) {
+    parcel.clear();
+    gender_criteria = "Female";
+    parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
+  } else if(batch==2) {
+    gender_criteria="All";
+    parcel.clear();
+    parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
+  }
   return
 
       StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('workshop-2022').snapshots(),
       builder: (context, snapshot) {
-        if(batch<2) {
+        if(batch<2 && gender<2) {
+          if (snapshot.data != null &&
+              snapshot.connectionState == ConnectionState.active) {
+            try {
+              print(snapshot.data!.docs.length);
+              for (var element in snapshot.data!.docs) {
+                if (element["${date}"] == criteria && element["Gender"]== gender_criteria) {
+                  parcel.add(Attendence(element['Name'], element['Email'],
+                      element['RollNo'],
+                      element['WhatsappNo']));
+                }
+              }
+
+            } catch (e) {
+              print(e);
+            }
+            Total_attendee=parcel.length-1;
+            //print(Total_attendee);
+            print(parcel);
+          }
+        }else if(batch<2 && gender==2) {
           if (snapshot.data != null &&
               snapshot.connectionState == ConnectionState.active) {
             try {
@@ -44,7 +78,27 @@ Package_list(int batch,String date) {
             //print(Total_attendee);
             print(parcel);
           }
-        }else if (batch==2 && snapshot.data != null && snapshot.connectionState==ConnectionState.active) {
+        }else if(batch==2 && gender<2) {
+          if (snapshot.data != null &&
+              snapshot.connectionState == ConnectionState.active) {
+            try {
+              print(snapshot.data!.docs.length);
+              for (var element in snapshot.data!.docs) {
+                if (element["Gender"] == gender_criteria) {
+                  parcel.add(Attendence(element['Name'], element['Email'],
+                      element['RollNo'],
+                      element['WhatsappNo']));
+                }
+              }
+
+            } catch (e) {
+              print(e);
+            }
+            Total_attendee=parcel.length-1;
+            //print(Total_attendee);
+            print(parcel);
+          }
+        }else if (batch==2 && gender==2 && snapshot.data != null && snapshot.connectionState==ConnectionState.active) {
           try {
             print(snapshot.data!.docs.length);
             for (var element in snapshot.data!.docs) {

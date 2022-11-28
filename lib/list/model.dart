@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class Attendence extends StatelessWidget {
                         ]),
                     trailing: Column(
                         children: [Padding(padding: EdgeInsets.only(top: 5),
-                            child: Text(afternoon!)),
+                            child: Text(afternoon!.toString())),
                           Padding(padding: EdgeInsets.only(top: 5),
                             child: Text(
                               email!,

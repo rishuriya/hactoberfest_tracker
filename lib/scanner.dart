@@ -29,7 +29,9 @@ class _ScannerState extends State<Scanner> {
   var _selectedDate=DateTime.now();
   var date =DateTime.now();
   int _selectedIndex =0;
+  int _selectedIndexGender =2;
   final List<String> _options = ['Present', 'Absent', 'Both'];
+  final List<String> _gender = ['Male', 'Female','Both'];
   final List work_date=["09-11-22",
     "10-11-22",
     "11-11-22",
@@ -106,47 +108,15 @@ class _ScannerState extends State<Scanner> {
 //
 //         FirebaseFirestore.instance
 //             .collection('workshop-2022').doc(_items[i]["id"])
-//             .set({
+//             .update({
 //           "Gender":_items[i]["Gender"],
 //           "Hostel":_items[i]["Hostel"],
 //           "id": _items[i]["id"],
 //           "Name": _items[i]["Name"],
 //           "Email": _items[i]["Email"],
-//           "RollNo": _items[i]["RollNo"],
-//           "WhatsappNo": _items[i]["WhatsappNo"],
-//           "09-11-22": "False",
-//           "10-11-22": "True",
-//           "11-11-22": "False",
-//           "12-11-22": "False",
-//           "13-11-22": "False",
-//           "14-11-22": "False",
-//           "15-11-22": "False",
-//           "16-11-22": "False",
-//           "17-11-22": "False",
-//           "18-11-22": "False",
-//           "19-11-22": "False",
-//           "20-11-22": "False",
-//           "21-11-22": "False",
-//           "22-11-22": "False",
-//           "23-11-22": "False",
-//           "24-11-22": "False",
-//           "25-11-22": "False",
-//           "26-11-22": "False",
-//           "27-11-22": "False",
-//           "28-11-22": "False",
-//           "29-11-22": "False",
-//           "30-11-22": "False",
-//           "01-12-22": "False",
-//           "02-12-22": "False",
-//           "03-12-22": "False",
-//           "04-12-22": "False",
-//           "05-12-22": "False",
-//           "06-12-22": "False",
-//           "07-12-22": "False",
-//           "08-12-22": "False",
-//           "09-12-22": "False",
-//           "10-12-22": "False",
-//           "11-12-22": "False"
+//           "RollNo": _items[i]["RollNo"].toString(),
+//           "WhatsappNo": _items[i]["WhatsappNo"].toString(),
+//           "RoomNo":_items[i]["RoomNo"].toString()
 //         }).onError((error, stackTrace) => print(error));
 // print(_items[i]["Name"]);
 //     }
@@ -181,6 +151,12 @@ class _ScannerState extends State<Scanner> {
                 height: 50,
                 child: _buildChips(),
               ),
+              const SizedBox(height: 15,
+              child: Divider(color: Colors.black,),),
+              SizedBox(
+                height: 50,
+                child: _genderChips(),
+              ),
               const SizedBox(height: 15),
               SizedBox(height: 15),
               Padding(
@@ -189,7 +165,7 @@ class _ScannerState extends State<Scanner> {
                   right: 16,
                 ),
                 child: Column(children: [
-                  Package_list(_selectedIndex,DateFormat('dd-MM-yy').format(_selectedDate)),
+                  Package_list(_selectedIndex,_selectedIndexGender,DateFormat('dd-MM-yy').format(_selectedDate)),
                 ]),
               ),
             ],
@@ -270,6 +246,45 @@ class _ScannerState extends State<Scanner> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: choiceChip
+          )
+      );
+    }
+
+    return Center(
+      child: Wrap(
+        // This next line does the trick.
+        spacing: 1,
+        children: chips,
+      ),
+    );
+  }
+  Widget _genderChips() {
+    List<Widget> chips = [];
+
+    for (int i = 0; i < _gender.length; i++) {
+      ChoiceChip choiceChip = ChoiceChip(
+        selected: _selectedIndexGender == i,
+        label: Text(_gender[i], style: TextStyle(color: _selectedIndexGender == i ?Colors.white:Colors.black)),
+        avatar: _selectedIndexGender == i ? const Icon(Icons.radio_button_checked):const Icon(Icons.radio_button_unchecked),
+        elevation: 2,
+        pressElevation: 5,
+        shadowColor: Colors.amber,
+        backgroundColor: Colors.grey.shade300,
+        selectedColor: Colors.amber,
+        onSelected: (bool selected) {
+          setState(() {
+            if (selected) {
+              _selectedIndexGender = i;
+            }
+          });
+          parcel.clear();
+        },
+      );
+
+      chips.add(
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: choiceChip
           )
       );
     }
