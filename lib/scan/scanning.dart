@@ -46,8 +46,10 @@ class _scanState extends State<scan> {
 
   Future<void> data(attendData) async {
     try {
+      DateTime time = DateTime.now();
       var present=0;
       var percent=0;
+      var date;
       var querySnapshot_std = await FirebaseFirestore.instance.collection(
           "workshop-2022").get();
       for (var queryDocumentSnapshot in querySnapshot_std.docs) {
@@ -55,21 +57,23 @@ class _scanState extends State<scan> {
         if(data_admin["id"]==attendData) {
           present=data_admin["Present"];
           present=present+1;
+          date=data_admin[DateFormat('dd-MM-yy').format(time)];
         }
       }
-      DateTime time = DateTime.now();
-      percent=present*10;
-      FirebaseFirestore.instance
-          .collection('workshop-2022')
-          .doc(attendData)
-          .update({
-        DateFormat('dd-MM-yy').format(time): "True",
-        "Present":present,
-        "Percentage":percent,
-      }).onError((error, stackTrace) =>
-      {
-        throw "Error:$error"
-      });
+     if(date=="False"){
+     percent=present*10;
+     FirebaseFirestore.instance
+         .collection ('workshop-2022')
+    .doc(attendData)
+        .update({
+    DateFormat('dd-MM-yy').format(time): "True",
+    "Present":present,
+    "Percentage":percent,
+    }).onError((error, stackTrace) =>
+    {
+    throw "Error:$error"
+    });
+    }
       Navigator.of(context).pop();
     }catch(e){
       Navigator.of(context).pop();

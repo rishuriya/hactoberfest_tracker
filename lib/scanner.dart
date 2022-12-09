@@ -109,14 +109,17 @@ class _ScannerState extends State<Scanner> {
 //         FirebaseFirestore.instance
 //             .collection('workshop-2022').doc(_items[i]["id"])
 //             .update({
-//           "Gender":_items[i]["Gender"],
-//           "Hostel":_items[i]["Hostel"],
-//           "id": _items[i]["id"],
-//           "Name": _items[i]["Name"],
-//           "Email": _items[i]["Email"],
-//           "RollNo": _items[i]["RollNo"].toString(),
-//           "WhatsappNo": _items[i]["WhatsappNo"].toString(),
-//           "RoomNo":_items[i]["RoomNo"].toString()
+//           // "Gender":_items[i]["Gender"],
+//           // "Hostel":_items[i]["Hostel"],
+//           // "id": _items[i]["id"],
+//           // "Name": _items[i]["Name"],
+//           // "Email": _items[i]["Email"],
+//           // "RollNo": _items[i]["RollNo"].toString(),
+//           // "WhatsappNo": _items[i]["WhatsappNo"].toString(),
+//           // "RoomNo":_items[i]["RoomNo"].toString()
+//           "Percentage":_items[i]["Percentage"],
+//           "Present":_items[i]["Present"],
+//           "10-12-22":_items[i]["10-22-22"],
 //         }).onError((error, stackTrace) => print(error));
 // print(_items[i]["Name"]);
 //     }

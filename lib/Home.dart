@@ -14,27 +14,29 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var _currentIndex = 0;
-  var count=0;
+  var count = 0;
   var num;
-  var time=DateTime.now();
+  var time = DateTime.now();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    num=no();
+    num = no();
   }
+
   Future<int> no() async {
-    var querySnapshot_std = await FirebaseFirestore.instance.collection(
-        "workshop-2022").get();
+    var querySnapshot_std =
+        await FirebaseFirestore.instance.collection("workshop-2022").get();
     for (var queryDocumentSnapshot in querySnapshot_std.docs) {
       var data_admin = queryDocumentSnapshot.data();
-      if(data_admin["${DateFormat('dd-MM-yy').format(time)}"]=="True") {
+      if (data_admin["${DateFormat('dd-MM-yy').format(time)}"] == "True") {
         count++;
       }
     }
     print(count);
     return count;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,35 +44,39 @@ class _HomeState extends State<Home> {
         body: Stack(
           children: [
             Center(
-                child:StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection(
-            "workshop-2022").where(DateFormat('dd-MM-yy').format(time),isEqualTo: "True")
-        .snapshots(),
-    builder: (BuildContext context,
-    AsyncSnapshot<QuerySnapshot> snapshot) {
-    if (snapshot.hasError) {
-    return const Center(
-    child: Text("Eroor"),
-    );
-    }
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("workshop-2022")
+                        .where(DateFormat('dd-MM-yy').format(time),
+                            isEqualTo: "True")
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text("Eroor"),
+                        );
+                      }
 
-    if (snapshot.hasData == null) {
-    return const Center(
-    child: CircularProgressIndicator(),
-    );
-    }
+                      if (snapshot.hasData == null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-    if (snapshot.hasData &&
-        snapshot.connectionState == ConnectionState.active) {
-
-    return Text(
-                  "${snapshot.data!.docs.length}",
-                  style: Theme.of(context).textTheme.headline1,
-                );}return const Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 245),
-          child: CircularProgressIndicator(),
-        ));})),
+                      if (snapshot.hasData &&
+                          snapshot.connectionState == ConnectionState.active) {
+                        return Text(
+                          "${snapshot.data!.docs.length}",
+                          style: Theme.of(context).textTheme.headline1,
+                        );
+                      }
+                      return const Center(
+                          child: Padding(
+                        padding: EdgeInsets.only(top: 245),
+                        child: CircularProgressIndicator(),
+                      ));
+                    })),
             // SizedBox(
             //   height: 20,
             // ),
@@ -80,14 +86,14 @@ class _HomeState extends State<Home> {
         bottomNavigationBar: SalomonBottomBar(
           currentIndex: _currentIndex,
           onTap: (i) {
-             _currentIndex = i;
+            _currentIndex = i;
             if (_currentIndex == 2) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Scanner()),
               );
             }
-            if(_currentIndex==1 ) {
+            if (_currentIndex == 1) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const scan()),
