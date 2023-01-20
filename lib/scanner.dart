@@ -117,9 +117,10 @@ class _ScannerState extends State<Scanner> {
 //           // "RollNo": _items[i]["RollNo"].toString(),
 //           // "WhatsappNo": _items[i]["WhatsappNo"].toString(),
 //           // "RoomNo":_items[i]["RoomNo"].toString()
-//           "Percentage":_items[i]["Percentage"],
-//           "Present":_items[i]["Present"],
-//           "10-12-22":_items[i]["10-22-22"],
+//           // "Percentage":_items[i]["Percentage"],
+//           // "Present":_items[i]["Present"],
+//           // "10-12-22":_items[i]["10-22-22"],
+//           "13-12-22":"False"
 //         }).onError((error, stackTrace) => print(error));
 // print(_items[i]["Name"]);
 //     }
@@ -327,7 +328,7 @@ class _ScannerState extends State<Scanner> {
                     firstDate: DateTime(2022,11),
                     lastDate: DateTime(currentDate.year+5),
                     selectableDayPredicate: (DateTime val) =>
-                    (val.year == 2022 && val.day >= 9 && val.month == 11) || (val.year == 2022 && val.day <= 10 && val.month == 12) ? true : false,
+                    (val.year == 2022 && val.day >= 9 && val.month == 11) || (val.year == 2022 && val.day <= 13 && val.month == 12) ? true : false,
                   );
                   setState(() {
                     if(selectedDate != null){
