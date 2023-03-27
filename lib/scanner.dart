@@ -26,45 +26,47 @@ class Scanner extends StatefulWidget {
 
 class _ScannerState extends State<Scanner> {
   ScanResult? scanResult;
-  var _selectedDate=DateTime.now();
-  var date =DateTime.now();
-  int _selectedIndex =0;
-  int _selectedIndexGender =2;
+  var _selectedDate = DateTime.now();
+  var date = DateTime.now();
+  int _selectedIndex = 0;
+  int _selectedIndexGender = 2;
   final List<String> _options = ['Present', 'Absent', 'Both'];
-  final List<String> _gender = ['Male', 'Female','Both'];
-  final List work_date=["09-11-22",
-    "10-11-22",
-    "11-11-22",
-    "12-11-22",
-    "13-11-22",
-    "14-11-22",
-    "15-11-22",
-    "16-11-22",
-    "17-11-22",
-    "18-11-22",
-    "19-11-22",
-    "20-11-22",
-    "21-11-22",
-    "22-11-22",
-    "23-11-22",
-    "24-11-22",
-    "25-11-22",
-    "26-11-22",
-    "27-11-22",
-    "28-11-22",
-    "29-11-22",
-    "30-11-22",
-    "01-12-22",
-    "02-12-22",
-    "03-12-22",
-    "04-12-22",
-    "05-12-22",
-    "06-12-22",
-    "07-12-22",
-    "08-12-22",
-    "09-12-22",
-    "10-12-22",
-    "11-12-22"];
+  final List<String> _gender = ['Male', 'Female', 'Both'];
+  // final List work_date = [
+  //   "09-11-22",
+  //   "10-11-22",
+  //   "11-11-22",
+  //   "12-11-22",
+  //   "13-11-22",
+  //   "14-11-22",
+  //   "15-11-22",
+  //   "16-11-22",
+  //   "17-11-22",
+  //   "18-11-22",
+  //   "19-11-22",
+  //   "20-11-22",
+  //   "21-11-22",
+  //   "22-11-22",
+  //   "23-11-22",
+  //   "24-11-22",
+  //   "25-11-22",
+  //   "26-11-22",
+  //   "27-11-22",
+  //   "28-11-22",
+  //   "29-11-22",
+  //   "30-11-22",
+  //   "01-12-22",
+  //   "02-12-22",
+  //   "03-12-22",
+  //   "04-12-22",
+  //   "05-12-22",
+  //   "06-12-22",
+  //   "07-12-22",
+  //   "08-12-22",
+  //   "09-12-22",
+  //   "10-12-22",
+  //   "11-12-22"
+  // ];
   String dropdownvalue_class = '___Select___';
   var batch = ["___Select___", "Morning", "Afternoon", "Both"];
   final _flashOnController = TextEditingController(text: 'Flash on');
@@ -76,7 +78,6 @@ class _ScannerState extends State<Scanner> {
   final _selectedCamera = -1;
   final _useAutoFocus = true;
   final _autoEnableFlash = false;
-
 
   static final _possibleFormats = BarcodeFormat.values.toList()
     ..removeWhere((e) => e == BarcodeFormat.unknown);
@@ -95,7 +96,6 @@ class _ScannerState extends State<Scanner> {
   }
 
   List _items = [];
-
 
 // Fetch content from the json file
 //   Future<void> readJson() async {
@@ -127,20 +127,18 @@ class _ScannerState extends State<Scanner> {
 //
 //   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    var _currentIndex=2;
+    var _currentIndex = 2;
     final scanResult = this.scanResult;
     var _choiceIndex;
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.amber,
-          title: const Text('amFOSS'),
-        ),
-        body: ListView(
+          appBar: AppBar(
+            backgroundColor: Colors.amber,
+            title: const Text('amFOSS'),
+          ),
+          body: ListView(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             children: [
@@ -155,8 +153,12 @@ class _ScannerState extends State<Scanner> {
                 height: 50,
                 child: _buildChips(),
               ),
-              const SizedBox(height: 15,
-              child: Divider(color: Colors.black,),),
+              const SizedBox(
+                height: 15,
+                child: Divider(
+                  color: Colors.black,
+                ),
+              ),
               SizedBox(
                 height: 50,
                 child: _genderChips(),
@@ -169,28 +171,28 @@ class _ScannerState extends State<Scanner> {
                   right: 16,
                 ),
                 child: Column(children: [
-                  Package_list(_selectedIndex,_selectedIndexGender,DateFormat('dd-MM-yy').format(_selectedDate)),
+                  Package_list(_selectedIndex, _selectedIndexGender,
+                      DateFormat('dd-MM-yy').format(_selectedDate)),
                 ]),
               ),
             ],
           ),
 
-        // floatingActionButton: FloatingActionButton.extended(
-        //   onPressed: () async {
-        //     await getcsv();
-        //   },
-        //   icon: const Icon(Icons.save),
-        //   label: const Text("Save"),
-        // ),
-          bottomNavigationBar:SalomonBottomBar(
+          // floatingActionButton: FloatingActionButton.extended(
+          //   onPressed: () async {
+          //     await getcsv();
+          //   },
+          //   icon: const Icon(Icons.save),
+          //   label: const Text("Save"),
+          // ),
+          bottomNavigationBar: SalomonBottomBar(
             currentIndex: _currentIndex,
-            onTap: (i) { setState(() => _currentIndex = i);
-            if(_currentIndex==0 ) {
-              Navigator.pop(
-                context
-              );
-            }
-              if(_currentIndex==1 ) {
+            onTap: (i) {
+              setState(() => _currentIndex = i);
+              if (_currentIndex == 0) {
+                Navigator.pop(context);
+              }
+              if (_currentIndex == 1) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const scan()),
@@ -219,18 +221,22 @@ class _ScannerState extends State<Scanner> {
                 selectedColor: Colors.orange,
               ),
             ],
-          )
-      ),
+          )),
     );
   }
+
   Widget _buildChips() {
     List<Widget> chips = [];
 
     for (int i = 0; i < _options.length; i++) {
       ChoiceChip choiceChip = ChoiceChip(
         selected: _selectedIndex == i,
-        label: Text(_options[i], style: TextStyle(color: _selectedIndex == i ?Colors.white:Colors.black)),
-        avatar: _selectedIndex == i ? const Icon(Icons.radio_button_checked):const Icon(Icons.radio_button_unchecked),
+        label: Text(_options[i],
+            style: TextStyle(
+                color: _selectedIndex == i ? Colors.white : Colors.black)),
+        avatar: _selectedIndex == i
+            ? const Icon(Icons.radio_button_checked)
+            : const Icon(Icons.radio_button_unchecked),
         elevation: 2,
         pressElevation: 5,
         shadowColor: Colors.amber,
@@ -246,12 +252,9 @@ class _ScannerState extends State<Scanner> {
         },
       );
 
-      chips.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            child: choiceChip
-          )
-      );
+      chips.add(Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: choiceChip));
     }
 
     return Center(
@@ -262,14 +265,20 @@ class _ScannerState extends State<Scanner> {
       ),
     );
   }
+
   Widget _genderChips() {
     List<Widget> chips = [];
 
     for (int i = 0; i < _gender.length; i++) {
       ChoiceChip choiceChip = ChoiceChip(
         selected: _selectedIndexGender == i,
-        label: Text(_gender[i], style: TextStyle(color: _selectedIndexGender == i ?Colors.white:Colors.black)),
-        avatar: _selectedIndexGender == i ? const Icon(Icons.radio_button_checked):const Icon(Icons.radio_button_unchecked),
+        label: Text(_gender[i],
+            style: TextStyle(
+                color:
+                    _selectedIndexGender == i ? Colors.white : Colors.black)),
+        avatar: _selectedIndexGender == i
+            ? const Icon(Icons.radio_button_checked)
+            : const Icon(Icons.radio_button_unchecked),
         elevation: 2,
         pressElevation: 5,
         shadowColor: Colors.amber,
@@ -285,12 +294,9 @@ class _ScannerState extends State<Scanner> {
         },
       );
 
-      chips.add(
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: choiceChip
-          )
-      );
+      chips.add(Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: choiceChip));
     }
 
     return Center(
@@ -301,9 +307,10 @@ class _ScannerState extends State<Scanner> {
       ),
     );
   }
-  Widget buildDateField(BuildContext context){
+
+  Widget buildDateField(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -312,33 +319,36 @@ class _ScannerState extends State<Scanner> {
             children: [
               Text(
                 DateFormat('dd-MM-yyyy').format(_selectedDate),
-                style: TextStyle(
-                    fontSize: 28,
-                  fontWeight: FontWeight.w400
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
               ),
-
               TextButton(
-                child: const Icon(Icons.calendar_today_sharp, color: Colors.amber,),
-                onPressed: () async{
+                child: const Icon(
+                  Icons.calendar_today_sharp,
+                  color: Colors.amber,
+                ),
+                onPressed: () async {
                   final currentDate = DateTime.now();
                   final selectedDate = await showDatePicker(
                     context: context,
                     initialDate: currentDate,
-                    firstDate: DateTime(2022,11),
-                    lastDate: DateTime(currentDate.year+5),
+                    firstDate: DateTime(2022, 11),
+                    lastDate: DateTime(currentDate.year + 5),
                     selectableDayPredicate: (DateTime val) =>
-                    (val.year == 2022 && val.day >= 9 && val.month == 11) || (val.year == 2022 && val.day <= 13 && val.month == 12) ? true : false,
+                        (val.year == 2022 && val.day >= 9 && val.month == 11) ||
+                                (val.year == 2023 &&
+                                    val.day <= 31 &&
+                                    val.month == 03)
+                            ? true
+                            : false,
                   );
                   setState(() {
-                    if(selectedDate != null){
+                    if (selectedDate != null) {
                       _selectedDate = selectedDate;
                     }
                   });
                   parcel.clear();
                 },
               ),
-
             ],
           ),
           const Text(
