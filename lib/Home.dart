@@ -25,12 +25,21 @@ class _HomeState extends State<Home> {
   }
 
   Future<int> no() async {
+    DateTime now = DateTime.now();
+    DateTime noon = DateTime(now.year, now.month, now.day, 12, 0);
     var querySnapshot_std =
-        await FirebaseFirestore.instance.collection("workshop-2022").get();
+        await FirebaseFirestore.instance.collection("hacktoberfest-2023").get();
     for (var queryDocumentSnapshot in querySnapshot_std.docs) {
       var data_admin = queryDocumentSnapshot.data();
-      if (data_admin["${DateFormat('dd-MM-yy').format(time)}"] == "True") {
-        count++;
+      if(now.isAfter(noon)) {
+        if (data_admin["afternoon_checkin"] == "True") {
+          count++;
+        }
+      }
+      else if(now.isBefore(noon)){
+        if (data_admin["morning_checkin"] == "True") {
+          count++;
+        }
       }
     }
     print(count);
@@ -44,39 +53,45 @@ class _HomeState extends State<Home> {
         body: Stack(
           children: [
             Center(
-                child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection("workshop-2022")
-                        .where(DateFormat('dd-MM-yy').format(time),
-                            isEqualTo: "True")
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return const Center(
-                          child: Text("Eroor"),
-                        );
-                      }
+              child: StreamBuilder<QuerySnapshot>(
+                stream: () {
+                  DateTime now = DateTime.now();
+                  String fieldToCheck = now.hour >= 12 ? "afternoon_checkin" : "morning_checkin";
 
-                      if (snapshot.hasData == null) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
+                  return FirebaseFirestore.instance
+                      .collection("hacktoberfest-2023")
+                      .where(fieldToCheck, isEqualTo: "True")
+                      .snapshots();
+                }(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text("Error"),
+                    );
+                  }
 
-                      if (snapshot.hasData &&
-                          snapshot.connectionState == ConnectionState.active) {
-                        return Text(
-                          "${snapshot.data!.docs.length}",
-                          style: Theme.of(context).textTheme.headline1,
-                        );
-                      }
-                      return const Center(
-                          child: Padding(
-                        padding: EdgeInsets.only(top: 245),
-                        child: CircularProgressIndicator(),
-                      ));
-                    })),
+                  if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (snapshot.hasData && snapshot.connectionState == ConnectionState.active) {
+                    return Text(
+                      "${snapshot.data!.docs.length}",
+                      style: Theme.of(context).textTheme.headline1,
+                    );
+                  }
+
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 245),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                },
+              ),
+            ),
             // SizedBox(
             //   height: 20,
             // ),
@@ -88,10 +103,11 @@ class _HomeState extends State<Home> {
           onTap: (i) {
             _currentIndex = i;
             if (_currentIndex == 2) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Scanner()),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => const Scanner()),
+              // );
+
             }
             if (_currentIndex == 1) {
               Navigator.push(

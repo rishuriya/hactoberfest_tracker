@@ -22,11 +22,11 @@ Package_list(int batch,int gender,String date) {
   }
   if (gender == 0) {
     parcel.clear();
-     gender_criteria= "Male";
+     gender_criteria= "morning_checkin";
     parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   } else if (gender == 1) {
     parcel.clear();
-    gender_criteria = "Female";
+    gender_criteria = "afternoon_checkin";
     parcel = [Attendence("Name", "Email", "RollNo", "WhatsappNo")];
   } else if(batch==2) {
     gender_criteria="All";
@@ -36,7 +36,7 @@ Package_list(int batch,int gender,String date) {
   return
 
       StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('workshop-2022').snapshots(),
+      stream: FirebaseFirestore.instance.collection('hacktoberfest-2023').snapshots(),
       builder: (context, snapshot) {
         if(batch<2 && gender<2) {
           if (snapshot.data != null &&
@@ -44,11 +44,8 @@ Package_list(int batch,int gender,String date) {
             try {
               print(snapshot.data!.docs.length);
               for (var element in snapshot.data!.docs) {
-                if (element["${date}"] == criteria && element["Gender"]== gender_criteria) {
-                  parcel.add(Attendence(element['Name'], element['Email'],
-                      element['RollNo'],
-                      element['WhatsappNo']));
-                }
+                  parcel.add(Attendence(
+                      element['name'], element['email'],"",""));
               }
 
             } catch (e) {
@@ -65,9 +62,9 @@ Package_list(int batch,int gender,String date) {
               print(snapshot.data!.docs.length);
               for (var element in snapshot.data!.docs) {
                 if (element["${date}"] == criteria) {
-                  parcel.add(Attendence(element['Name'], element['Email'],
-                      element['RollNo'],
-                      element['WhatsappNo']));
+                  parcel.add(Attendence(element['name'], element['email'],
+                      "",
+                      ""));
                 }
               }
 

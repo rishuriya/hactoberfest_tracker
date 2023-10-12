@@ -37,7 +37,7 @@ Go to the firebase,
   Genrate google-service.json
 ```
 ```bash
-  Create firestor database Collection "workshop-2022"
+  Create firestor database Collection "hacktoberfest-2023"
 ```
 ```bash
   put json in android->app directory

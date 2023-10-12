@@ -107,7 +107,7 @@ class _ScannerState extends State<Scanner> {
 //       for(int i=0;_items.length>i;i++) {
 //
 //         FirebaseFirestore.instance
-//             .collection('workshop-2022').doc(_items[i]["id"])
+//             .collection('hacktoberfest-2023').doc(_items[i]["id"])
 //             .update({
 //           // "Gender":_items[i]["Gender"],
 //           // "Hostel":_items[i]["Hostel"],
@@ -334,10 +334,9 @@ class _ScannerState extends State<Scanner> {
                     firstDate: DateTime(2022, 11),
                     lastDate: DateTime(currentDate.year + 5),
                     selectableDayPredicate: (DateTime val) =>
-                        (val.year == 2022 && val.day >= 9 && val.month == 11) ||
                                 (val.year == 2023 &&
-                                    val.day <= 31 &&
-                                    val.month == 03)
+                                    val.day == 12 &&
+                                    val.month == 10)
                             ? true
                             : false,
                   );

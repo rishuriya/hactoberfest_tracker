@@ -28,7 +28,6 @@ class _scanState extends State<scan> {
   final _useAutoFocus = true;
   final _autoEnableFlash = false;
 
-
   static final _possibleFormats = BarcodeFormat.values.toList()
     ..removeWhere((e) => e == BarcodeFormat.unknown);
 
@@ -46,36 +45,29 @@ class _scanState extends State<scan> {
 
   Future<void> data(attendData) async {
     try {
-      DateTime time = DateTime.now();
-      var present=0;
-      var percent=0;
-      var date;
-      var querySnapshot_std = await FirebaseFirestore.instance.collection(
-          "workshop-2022").get();
-      for (var queryDocumentSnapshot in querySnapshot_std.docs) {
-        var data_admin = queryDocumentSnapshot.data();
-        if(data_admin["id"]==attendData) {
-          present=data_admin["Present"];
-          present=present+1;
-          date=data_admin[DateFormat('dd-MM-yy').format(time)];
-        }
+      DateTime now = DateTime.now();
+      DateTime noon = DateTime(now.year, now.month, now.day, 12, 0);
+
+      if (now.isAfter(noon)) {
+        FirebaseFirestore.instance
+            .collection('hacktoberfest-2023')
+            .doc(attendData)
+            .update({
+          "afternoon_checkin": "True",
+          "afternoon_checkin_time": now,
+        }).onError((error, stackTrace) => {throw "Error:$error"});
       }
-     if(date=="False"){
-     percent=present*10;
-     FirebaseFirestore.instance
-         .collection ('workshop-2022')
-    .doc(attendData)
-        .update({
-    DateFormat('dd-MM-yy').format(time): "True",
-    "Present":present,
-    "Percentage":percent,
-    }).onError((error, stackTrace) =>
-    {
-    throw "Error:$error"
-    });
-    }
+      if (now.isBefore(noon)) {
+        FirebaseFirestore.instance
+            .collection('hacktoberfest-2023')
+            .doc(attendData)
+            .update({
+          "morning_checkin": "True",
+          "morning_checkin_time": now,
+        }).onError((error, stackTrace) => {throw "Error:$error"});
+      }
       Navigator.of(context).pop();
-    }catch(e){
+    } catch (e) {
       Navigator.of(context).pop();
     }
     //return _items;
@@ -83,20 +75,19 @@ class _scanState extends State<scan> {
 
   @override
   Widget build(BuildContext context) {
-
     final scanResult = this.scanResult;
-    if(scanResult != null){
+    if (scanResult != null) {
       data(scanResult.rawContent);
     }
     return Scaffold(
       backgroundColor: Colors.amber,
-        body: Center(
-          child: LoadingAnimationWidget.twistingDots(
-            leftDotColor: const Color(0xFF1A1A3F),
-            rightDotColor: const Color(0xFFEA3799),
-            size: 30,
-          ),
-    ),
+      body: Center(
+        child: LoadingAnimationWidget.twistingDots(
+          leftDotColor: const Color(0xFF1A1A3F),
+          rightDotColor: const Color(0xFFEA3799),
+          size: 30,
+        ),
+      ),
     );
   }
 
@@ -127,8 +118,3 @@ class _scanState extends State<scan> {
     }
   }
 }
-
-
-
-
-
